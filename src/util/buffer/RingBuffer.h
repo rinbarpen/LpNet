@@ -1,0 +1,65 @@
+#pragma once
+
+#include <vector>
+#include <memory>
+#include <atomic>
+#include "Mutex.h"
+
+// Thread-Safe
+template <typename T>
+class RingBuffer
+{
+public:
+  explicit RingBuffer(size_t capacity) :
+		capacity_(capacity + 1)
+	{}
+	~RingBuffer() = default;
+
+	bool push(const T &x)
+	{
+		Mutex::lock locker(mutex_);
+
+		if (capacity_ <= size())
+			return false;
+
+		data_[put_pos_] = x;
+		put_pos_ = (put_pos_ + 1) % capacity_;
+	}
+	bool push(T&& x)
+	{
+		Mutex::lock locker(mutex_);
+
+		if (capacity_ <= size())
+			return false;
+
+		data_[put_pos_] = std::move(x);
+		put_pos_ = (put_pos_ + 1) % capacity_;
+		return true;
+	}
+	bool pop(T &x)
+	{
+		if (emptyInternal())
+			return false;
+
+		x = data_[get_pos_];
+		get_pos_ = (get_pos_ + 1) % capacity_;
+
+		return true;
+	}
+	
+	bool full() const { Mutex::lock locker(mutex_); return fullInternal(); }
+	bool empty() const { Mutex::lock locker(mutex_); return emptyInternal(); }
+	size_t capacity() const { return capacity_ - 1; }
+	size_t size() const { Mutex::lock locker(mutex_); return sizeInternal(); }
+private:
+	bool fullInternal() const { return sizeInternal() == capacity_; }
+	bool emptyInternal() const { return put_pos_ == get_pos_; }
+	size_t sizeInternal() const { return (capacity_ + put_pos_ - get_pos_) % capacity_; }
+private:
+	const size_t capacity_{0};
+	size_t put_pos_{0};
+	size_t get_pos_{0};
+	std::vector<T> data_;
+
+	mutable Mutex::type mutex_;
+};

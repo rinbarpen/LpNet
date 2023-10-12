@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="net">
+      <UniqueIdentifier>{55ea0af5-ce22-4e8b-ba1b-80b7e7ad9c3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{e50ea2cd-3d20-4226-b4cb-3ccd005e7002}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="net\tcp">
+      <UniqueIdentifier>{4982fc1c-2176-4110-81b6-3e97a2d5764b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="net\udp">
+      <UniqueIdentifier>{39bfad16-3160-4cbe-9ac2-7d9b120f3d0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="env">
+      <UniqueIdentifier>{3be38b22-2e05-49f8-b037-d4b719ae0160}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util\buffer">
+      <UniqueIdentifier>{18d009b3-2862-48b0-8d7c-e510675cd30a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util\logger">
+      <UniqueIdentifier>{0aee89af-c120-4fd8-bcce-622f4b8b2ea2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util\mm">
+      <UniqueIdentifier>{e6e8e3d0-9dfd-47f9-8b82-1d74e38468bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mongoose">
+      <UniqueIdentifier>{836a3b76-c641-43ce-b687-a2f4aafb3d22}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\env\Env.h">
+      <Filter>env</Filter>
+    </ClInclude>
+    <ClInclude Include="src\env\ServerEnv.h">
+      <Filter>env</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\logger\Logger.h">
+      <Filter>util\logger</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\mm\Arena.h">
+      <Filter>util\mm</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\buffer\Buffer.h">
+      <Filter>util\buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\buffer\BufferPool.h">
+      <Filter>util\buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\buffer\BufferReader.h">
+      <Filter>util\buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\buffer\BufferWriter.h">
+      <Filter>util\buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\buffer\Replacer.h">
+      <Filter>util\buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\buffer\RingBuffer.h">
+      <Filter>util\buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\Clock.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\Library.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\Record.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\SafeQueue.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\SharedString.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\ThreadPool.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\Timer.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\Timestamp.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\udp\UdpClient.h">
+      <Filter>net\udp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\udp\UdpConnection.h">
+      <Filter>net\udp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\udp\UdpServer.h">
+      <Filter>net\udp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\udp\UdpSocket.h">
+      <Filter>net\udp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\tcp\TcpClient.h">
+      <Filter>net\tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\tcp\TcpConnection.h">
+      <Filter>net\tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\tcp\TcpServer.h">
+      <Filter>net\tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\tcp\TcpSocket.h">
+      <Filter>net\tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\Acceptor.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\Channel.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\EpollManager.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\EventLoop.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\net.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\NetAddress.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\Pipe.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\SelectManager.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\Socket.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\socket_util.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\TaskScheduler.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\defs.h" />
+    <ClInclude Include="src\marcos.h" />
+    <ClInclude Include="src\Mutex.h" />
+    <ClInclude Include="src\platform.h" />
+    <ClInclude Include="src\Singleton.h" />
+    <ClInclude Include="src\string_utils.h" />
+    <ClInclude Include="src\types.h" />
+    <ClInclude Include="src\mongoose\mongoose.h">
+      <Filter>mongoose</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\util\logger\Logger.cpp">
+      <Filter>util\logger</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\mm\Arena.cpp">
+      <Filter>util\mm</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\buffer\Buffer.cpp">
+      <Filter>util\buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\buffer\BufferReader.cpp">
+      <Filter>util\buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\buffer\BufferWriter.cpp">
+      <Filter>util\buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\buffer\Replacer.cpp">
+      <Filter>util\buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\Library.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\SharedString.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\Timer.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\udp\UdpClient.cpp">
+      <Filter>net\udp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\udp\UdpConnection.cpp">
+      <Filter>net\udp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\udp\UdpServer.cpp">
+      <Filter>net\udp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\tcp\TcpClient.cpp">
+      <Filter>net\tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\tcp\TcpConnection.cpp">
+      <Filter>net\tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\tcp\TcpServer.cpp">
+      <Filter>net\tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\Acceptor.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\EpollManager.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\EventLoop.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\Pipe.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\SelectManager.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\Socket.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\TaskScheduler.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\mongoose\mongoose.c">
+      <Filter>mongoose</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
