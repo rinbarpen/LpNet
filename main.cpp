@@ -7,6 +7,9 @@
 #include "net/EventLoop.h"
 #include "net/SelectManager.h"
 
+#define SERVER_HOST "127.0.0.1"
+#define SERVER_PORT 1573
+
 int main()
 {
 #if defined(__linux) || defined(__linux__) 
@@ -24,9 +27,9 @@ int main()
   // env.max_backlog_ = 10;
   TcpServer server(&eventLoop);
 
-  server.start("127.0.0.1", 12345, 10);
+  server.start(SERVER_HOST, SERVER_PORT, 10);
 
-  eventLoop.run();
+  server.doEventLoop();
 
   server.stop();
 

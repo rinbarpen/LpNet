@@ -1,9 +1,5 @@
 #include "BufferWriter.h"
 
-#include <cstring>
-
-#include "net/Acceptor.h"
-
 void writeU16Forward(char *p, uint16_t value)
 {
   p[0] = value >> 8;
@@ -41,52 +37,22 @@ void writeU32Reverse(char *p, uint32_t value)
   p[0] = value & 0xFF;
 }
 
-bool BufferWriter::append(std::shared_ptr<char> data, uint32_t len, uint32_t pos)
+bool BufferWriter::append(const char *data, uint32_t len)
 {
-  if (len <= pos) return false;
-  if (full()) return false;
-  Packet pkt = {
-    data, len, pos
-  };
-  q_.emplace(pkt);
-  return true;
-}
-bool BufferWriter::append(const char *data, uint32_t len, uint32_t pos)
-{
-  if (len <= pos) return false;
   if (full()) return false;
 
-  Packet pkt;
-  pkt.data.reset(new char[len + 512], std::default_delete<char[]>());
-  ::memcpy(pkt.data.get(), data, len);
-  pkt.len = len;
-  pkt.pos = pos;
-  q_.push(pkt);
+  Buffer buffer(len);
+  buffer.write(data, len);
+  q_.push(buffer);
   return true;
 }
-/*
+
 int BufferWriter::send(sockfd_t fd, int ms_timeout)
 {
-  if (ms_timeout > 0)
-    ::net::socket_api::setBlocking(fd);
+  if (empty()) return -1;
 
-  int ret = 0;
-  while (!q_.empty()) {
-    Packet& p = q_.front();
-    ret = ::send(fd, p.data.get() + p.pos, p.len - p.pos, 0);
-    if (ret > 0) {
-      p.pos += ret;
-      if (p.pos == p.len) q_.pop();
-    }
-    else {
-#if defined(__WIN__)      
-      printf("Get Error: %s\n", WSAGetLastError());
-#elif defined(__LINUX__)
-#endif
-    }
-  }
-
-  if (ms_timeout > 0)
-    ::net::socket_api::setNonBlocking(fd);
+  Buffer buffer = std::move(q_.front()); q_.pop();
+  size_t size = buffer.readableBytes();
+  buffer.write(fd, size, ms_timeout);
+  return size;
 }
-*/

@@ -67,6 +67,18 @@ public:
     q_.push(TaskWrapper(std::forward<F>(f), std::forward<Args>(args)...));
     cond_.notify_one();
   }
+
+  void submit(TaskWrapper &&task)
+  {
+    q_.push(std::move(task));
+    cond_.notify_one();
+  }
+
+  template <typename F, typename... Args>
+  static TaskWrapper makeTask(F &&f, Args&&... args)
+  {
+    return TaskWrapper(std::forward<F>(f), std::forward<Args>(args)...);
+  }
   
   void start()
   {

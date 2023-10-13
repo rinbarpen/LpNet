@@ -67,7 +67,6 @@ struct NetProtocol
 static constexpr sockfd_t kInvalidSocket = -1;
 namespace socket_api
 {
-// static auto pSocketUtilLogger = GET_LOGGER("socket_api");
 
 static sockfd_t socket(int domain, int type, int protocol)
 {
@@ -79,19 +78,27 @@ static int bind(sockfd_t fd, const char *ip, uint16_t port)
   int r;
 
   struct sockaddr_in addr;
+  memset(&addr, 0, sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = ::htons(port);
+  // addr.sin_addr.s_addr = inet_addr(ip);
+  // r = addr.sin_addr.s_addr;
   r = ::inet_pton(AF_INET, ip, &addr.sin_addr);
   if (r < 0) {
-    // LY_LOG_ERROR(pSocketUtilLogger) << "error ip: " << ip;
+    LOG_ERROR() << "error ip: " << ip;
     return r;
   }
 
-  r = ::bind(fd, (struct sockaddr*)(&addr), sizeof(addr));
-  if (r < 0) {
-    // LY_LOG_ERROR(pSocketUtilLogger) << "error bind: (" << ip << " " << port << ")";
+  r = ::bind(fd, (struct sockaddr*)&addr, sizeof(addr));
+  if (r == SOCKET_ERROR) {
+    LOG_ERROR() << "error bind: (" << inet_ntoa(addr.sin_addr) << " " << ntohs(addr.sin_port) << ")";
     return r;
   }
+
+  {
+    LOG_INFO() << "bind: (" << inet_ntoa(addr.sin_addr) << " " << ntohs(addr.sin_port) << ")";
+  }
+  
   return r;
 }
 static int listen(sockfd_t fd, int backlog)
@@ -99,7 +106,7 @@ static int listen(sockfd_t fd, int backlog)
   int r;
   r = ::listen(fd, backlog);
   if (r < 0) {
-    // LY_LOG_ERROR(pSocketUtilLogger) << "error listen: " << fd << " " << backlog;
+    LOG_ERROR() << "error listen: " << fd << " " << backlog;
     return r;
   }
   return r;
@@ -131,7 +138,7 @@ static sockfd_t accept(sockfd_t fd, char *ip, uint16_t *port)
   struct sockaddr_in *addr4 = reinterpret_cast<struct sockaddr_in *>(&addr);
   *port = ::ntohs(addr4->sin_port);
   if (::inet_ntop(AF_INET, &addr4->sin_addr, ip, sizeof(ip)) == nullptr) {
-    // LY_LOG_ERROR(pSocketUtilLogger) << "error ip: " << ip;
+    LOG_ERROR() << "error ip: " << ip;
     return kInvalidSocket;
   }
   return clientfd;
@@ -142,7 +149,7 @@ static int connect(sockfd_t fd, const char *ip, uint16_t port)
   addr.sin_family = AF_INET;
   addr.sin_port = ::htons(port);
   if (::inet_pton(AF_INET, ip, &addr.sin_addr) < 0) {
-    // LY_LOG_ERROR(pSocketUtilLogger) << "error ip: " << ip;
+    LOG_ERROR() << "error ip: " << ip;
     return -1;
   }
 
@@ -176,7 +183,7 @@ static int recv2(sockfd_t fd, char *buf, uint32_t len, int flags = 0)
 
 static int close(sockfd_t fd)
 {
-  LOG_DEBUG() << "";
+  LOG_DEBUG() << "close " << fd;
 #if defined(__LINUX__)
   return ::close(fd);
 #elif defined(__WIN__)
@@ -189,8 +196,11 @@ static int sendto(sockfd_t fd, const char *buf, uint32_t len, int flags, const c
   int r;
   struct sockaddr_in addr;
   addr.sin_family = AF_INET;
-  r = inet_pton(AF_INET, ip, &addr.sin_addr.s_addr);
-  if (r < 0) return r;
+  r = ::inet_pton(AF_INET, ip, &addr.sin_addr);
+  if (r < 0) {
+    LOG_ERROR() << "error ip: " << ip;
+    return r;
+  }
 
   r = ::sendto(fd, buf, len, flags, (struct sockaddr*)&addr, INET_ADDRSTRLEN);
   return r;
@@ -206,7 +216,7 @@ static NetAddress getPeerAddr(sockfd_t fd)
 
   char ip[INET_ADDRSTRLEN];
   inet_ntop(AF_INET, &addr.sin_addr, ip, INET_ADDRSTRLEN);
-  return { ip, ntohs(addr.sin_port) };
+  return { ip, ::ntohs(addr.sin_port) };
 }
 
 static void setKeepAlive(sockfd_t fd, int on = 1)

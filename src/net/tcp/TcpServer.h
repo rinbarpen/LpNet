@@ -13,6 +13,8 @@ public:
 	virtual bool start(const char *ip, uint16_t port, int max_backlog);
 	virtual bool stop();
 
+	void doEventLoop() { event_loop_->run(); }
+
 protected:
 	virtual TcpConnection::ptr onConnect(sockfd_t fd);
 	virtual void addConnection(sockfd_t fd, TcpConnection::ptr conn);

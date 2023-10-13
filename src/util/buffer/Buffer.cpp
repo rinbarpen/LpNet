@@ -1,6 +1,6 @@
 #include "Buffer.h"
 
-#include <assert.h>
+#include <cassert>
 #include <cstring>
 
 Buffer::Buffer(size_t capacity) :
@@ -17,8 +17,7 @@ Buffer::~Buffer()
 size_t Buffer::read(char *s, size_t n)
 {
   // assert(sizeof(s) >= n);
-  Mutex::lock locker(mutex_);
-  size_t bytesRead = sizeInternal();
+  size_t bytesRead = readableBytes();
   if (bytesRead > n) {
     bytesRead = n;
   }
@@ -35,8 +34,7 @@ size_t Buffer::read(char *s, size_t n)
 size_t Buffer::write(const char *s, size_t n)
 {
   // assert(sizeof(s) <= n);
-  Mutex::lock locker(mutex_);
-  size_t bytesWrite = capacity_ - sizeInternal();
+  size_t bytesWrite = capacity_ - size();
   if (bytesWrite > n) {
     bytesWrite = n;
   }
@@ -89,14 +87,32 @@ void Buffer::reset(const size_t newCapacity)
     throw std::runtime_error("no enough free memory");
   }
 
-  Mutex::lock locker(mutex_);
-  size_t n = sizeInternal() >= newCapacity ? newCapacity : sizeInternal();
+  size_t n = size() >= newCapacity ? newCapacity : size();
   for (size_t i = 0; i < n; ++i) {
     new_data[i] = data_[indexOf(get_pos_, i)];
   }
 
   delete[] data_;
   data_ = new_data;
+  get_pos_ = put_pos_ = 0;
   capacity_ = newCapacity;
+}
+
+int Buffer::readTo(const char* target)
+{
+  int len = strlen(target);
+
+  for (size_t i = 0; i < len; ++i) {
+    for (size_t j = get_pos_; j != put_pos_; ++j) {
+      if (i + j == put_pos_) return -1;
+
+      size_t idx = indexOf(j, i);
+      if (data_[idx] != target[i]) {
+        break;
+      }
+    }
+  }
+
+  return len;
 }
 

@@ -145,6 +145,7 @@
     <ClInclude Include="src\Mutex.h" />
     <ClInclude Include="src\net\Acceptor.h" />
     <ClInclude Include="src\net\Channel.h" />
+    <ClInclude Include="src\net\Connector.h" />
     <ClInclude Include="src\net\EpollManager.h" />
     <ClInclude Include="src\net\EventLoop.h" />
     <ClInclude Include="src\net\net.h" />
@@ -187,6 +188,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\mongoose\mongoose.c" />
     <ClCompile Include="src\net\Acceptor.cpp" />
+    <ClCompile Include="src\net\Connector.cpp" />
     <ClCompile Include="src\net\EpollManager.cpp" />
     <ClCompile Include="src\net\EventLoop.cpp" />
     <ClCompile Include="src\net\Pipe.cpp" />

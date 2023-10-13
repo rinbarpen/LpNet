@@ -25,11 +25,17 @@ void Acceptor::listen(const NetAddress& addr, int backlog)
   else
     socket_.reset(new TcpSocket());
 
-  socket_api::setKeepAlive(socket_->getSockfd());
+  socket_api::setReuseAddr(socket_->getSockfd());
+  socket_api::setReusePort(socket_->getSockfd());
   socket_api::setNonBlocking(socket_->getSockfd());
-  socket_->bind(addr);
+
+  if (socket_->bind(addr) < 0) {
+    throw std::runtime_error("bind");
+  }
   channel_.reset(new Channel(socket_->getSockfd()));
-  socket_->listen(backlog);
+  if (socket_->listen(backlog) < 0) {
+    throw std::runtime_error("listen");
+  }
 
   channel_->setReadCallback([this]() { this->onAccept(); });
   channel_->enableReading();
@@ -41,7 +47,6 @@ void Acceptor::close()
   LOG_DEBUG() << "Acceptor is closed";
 
   Mutex::lock locker(mutex_);
-
   if (socket_->isValid()) {
     task_scheduler_->removeChannel(channel_->getSockfd());
     socket_->close();

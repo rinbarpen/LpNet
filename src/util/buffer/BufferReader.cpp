@@ -1,82 +1,60 @@
 #include "BufferReader.h"
 
-int BufferReader::append(const std::string &data)
+int BufferReader::append(const char *data, size_t len)
 {
-  int write_len = writableBytes();
-  if (write_len < MAX_BYTES_PER_READ) {
-    char *nbuf = new char[capacity_ * 2];
-    ::memmove(nbuf, data_, capacity_);
-    capacity_ *= 2;
-    delete[] data_;
-    data_ = nbuf;
+  int write_len = buffer_.writableBytes();
+  if (write_len < Buffer::kMaxBytesPerRead) {
+    buffer_.reset(buffer_.capacity() * 2);
   }
 
-  int len = data.length();
-  ::memcpy(data_, data.c_str(), len);
-  if (len <= 0) return 0;
-
-  write_pos_ += len;
+  buffer_.write(data, len);
+  
   return len;
 }
 int BufferReader::read(size_t n, std::string &data)
 {
-  int size = readableBytes();
-  if (n > 0 && n <= size) {
-    data.assign(data_ + read_pos_, n);
-    advance(n);
+  int bytesRead = buffer_.readableBytes();
+  if (n > 0 && n <= bytesRead) {
+    buffer_.read(data.data(), n);
 
     return n;
   }
+
   return 0;
 }
-/*
+
 int BufferReader::read(sockfd_t fd)
 {
   int write_len = writableBytes();
-  if (write_len < MAX_BYTES_PER_READ) {
-    char *nbuf = new char[capacity_ * 2];
-    ::memmove(nbuf, data_, capacity_);
-    capacity_ *= 2;
-    delete[] data_;
-    data_ = nbuf;
+  // ÈÝÁ¿²»×ã
+  if (write_len < Buffer::kMaxBytesPerRead) {
+    buffer_.reset(buffer_.capacity() * 2);
   }
 
-  int len = ::net::socket_api::recv(fd, data_ + write_pos_, MAX_BYTES_PER_READ);
+  int len = buffer_.write(fd, Buffer::kMaxBytesPerRead);
   if (len <= 0) return 0;
-  
-  write_pos_ += len;
+
   return len;
 }
-*/
+
 int BufferReader::readAll(std::string &data)
 {
-  int size = readableBytes();
-  data.assign(data_ + read_pos_, size);
-
-  reset();
+  int size = buffer_.readableBytes();
+  buffer_.read(data.data(), size);
 
   return size;
 }
 void BufferReader::advance(size_t n)
 {
-  if (n > 0) {
-    read_pos_ += n;
-    if (write_pos_ == read_pos_)
-      reset();
-  }
+  buffer_.read(nullptr, n);
 }
 void BufferReader::advanceTo(const char *target)
 {
-  if (target - data_ > 0 && target - data_ <= write_pos_) {
-    read_pos_ = target - data_;
-    if (write_pos_ == read_pos_) 
-      reset();
-  }
+  buffer_.readTo(target);
 }
 void BufferReader::reset()
 {
-  read_pos_ = 0;
-  write_pos_ = 0;
+  buffer_.clear();
 }
 
 uint16_t readU16Forward(const char *p)

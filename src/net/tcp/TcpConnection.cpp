@@ -70,8 +70,8 @@ void TcpConnection::onWrite()
   if (!running_) return;
 
   int ret = 0;
-  
-  ret = write_buffer_->write(channel_->getSockfd(), 100);
+  // TODO:
+  ret = write_buffer_->write(channel_->getSockfd(), write_buffer_->size());
   if (ret < 0) {
     this->close();
     return;
@@ -85,7 +85,7 @@ void TcpConnection::onWrite()
   }
   else if (!channel_->isWriting()) {
     channel_->enableWriting();
-    // task_scheduler_->UpdateChannel(channel_);
+    // task_scheduler_->updateChannel(channel_);
   }
 }
 void TcpConnection::onClose()

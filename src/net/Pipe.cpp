@@ -6,11 +6,11 @@ bool Pipe::create()
 {
   LOG_DEBUG() << "Create a pipe";
 #if defined(__WIN__)
-	fds_[0] = socket_api::socket_tcp();
-	fds_[1] = socket_api::socket_tcp();
-
-	socket_api::setNonBlocking(fds_[0]);
-	socket_api::setNonBlocking(fds_[1]);
+	// fds_[0] = socket_api::socket_tcp();
+	// fds_[1] = socket_api::socket_tcp();
+	//
+	// socket_api::setNonBlocking(fds_[0]);
+	// socket_api::setNonBlocking(fds_[1]);
 #elif defined(__LINUX__)
 	if (::pipe2(fds_, O_NONBLOCK | O_CLOEXEC) < 0) {
 		return false;

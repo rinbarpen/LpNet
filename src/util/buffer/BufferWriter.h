@@ -3,6 +3,7 @@
 #include <memory>
 #include <queue>
 
+#include "Buffer.h"
 
 void writeU16Forward(char *p, uint16_t value);
 void writeU16Reverse(char *p, uint16_t value);
@@ -18,21 +19,14 @@ public:
     capacity_(qcap)
   {}
 
-  bool append(std::shared_ptr<char> data, uint32_t len, uint32_t pos = 0);
-  bool append(const char* data, uint32_t len, uint32_t pos = 0);
-  // int  send(sockfd_t fd, int ms_timeout = 0);
+  bool append(const char* data, uint32_t len);
+  int  send(sockfd_t fd, int ms_timeout = 0);
 
   bool empty() const { return q_.empty(); }
   bool full()  const { return capacity_ == q_.size(); }
   size_t capacity() const { return capacity_; }
-private:
-  struct Packet
-  {
-    std::shared_ptr<char> data;
-    uint32_t len;
-    uint32_t pos;
-  };
 
-  std::queue<Packet> q_;
+private:
+  std::queue<Buffer> q_;
   size_t capacity_;
 };

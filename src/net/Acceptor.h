@@ -21,10 +21,10 @@ public:
   void close();
 
   void setNewConnectionCallback(const NewConnectionCallback &fn) { new_connection_cb_ = fn; }
-  bool isIpv6() const { return socket_->isIpv6(); }
+  // bool isIpv6() const { return socket_->isIpv6(); }
 
-  std::string getIp() const noexcept { return socket_->getIp(); }
-  uint16_t getPort() const noexcept { return socket_->getPort(); }
+  std::string getIp() const { return socket_->getIp(); }
+  uint16_t getPort() const { return socket_->getPort(); }
 private:
   void onAccept();
 

@@ -4,7 +4,7 @@
 
 class Buffer
 {
-protected:
+public:
 	static constexpr int kMaxBytesPerRead = 4096;
 public:
 	explicit Buffer(size_t capacity);
@@ -39,26 +39,26 @@ public:
 
 	void reset(const size_t newCapacity);
 
-	bool full() const { Mutex::lock locker(mutex_); return fullInternal(); }
-	bool empty() const { Mutex::lock locker(mutex_); return emptyInternal(); }
-	size_t capacity() const { Mutex::lock locker(mutex_); return capacityInternal(); }
-	size_t size() const { Mutex::lock locker(mutex_); return sizeInternal(); }
+  int readTo(const char *target);
 
-	size_t readableBytes() const { Mutex::lock locker(mutex_); return sizeInternal(); }
-	size_t writableBytes() const { Mutex::lock locker(mutex_); return capacity_ - sizeInternal(); }
+  char *peek() { return data_ + get_pos_; }
+  const char *peek() const { return data_ + get_pos_; }
+
+	size_t readableBytes() const { return size(); }
+	size_t writableBytes() const { return capacity_ - size(); }
+
+  void clear() { get_pos_ = put_pos_ = 0; }
+	bool full() const { return size() == capacity_; }
+	bool empty() const { return put_pos_ == get_pos_; }
+	size_t size() const { return (capacity_ + 1 + put_pos_ - get_pos_) % (capacity_ + 1); }
+	size_t capacity() const { return capacity_; }
 
 private:
 	inline size_t indexOf(const size_t pos, const size_t n) const { return (pos + n) % (capacity_ + 1); }
-	inline bool fullInternal() const { return sizeInternal() == capacity_; }
-	inline bool emptyInternal() const { return put_pos_ == get_pos_; }
-	inline size_t sizeInternal() const { return (capacity_ + put_pos_ - get_pos_) % (capacity_ + 1); }
-	inline size_t capacityInternal() const { return capacity_; }
 
 private:
 	size_t capacity_{ 0 };
 	size_t put_pos_{ 0 };
 	size_t get_pos_{ 0 };
 	char *data_;
-
-	mutable Mutex::type mutex_;
 };

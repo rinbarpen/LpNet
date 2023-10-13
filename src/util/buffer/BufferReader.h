@@ -4,6 +4,8 @@
 #include <memory>
 #include <cstring>
 
+#include "Buffer.h"
+
 uint16_t readU16Forward(const char *p);
 uint16_t readU16Reverse(const char *p);
 uint32_t readU24Forward(const char *p);
@@ -13,44 +15,32 @@ uint32_t readU32Reverse(const char *p);
 
 class BufferReader
 {
-protected:
-  static constexpr int MAX_BYTES_PER_READ = 4096;
-  //static constexpr int MAX_CAPACITY = 1024 * 1024;  // 1MB
 public:
   using ptr = std::shared_ptr<BufferReader>;
 
-  BufferReader(size_t init_size = 4096) :
-    capacity_(init_size)
-  {
-    data_ = new char[capacity_];
-  }
+  BufferReader(size_t init_size = Buffer::kMaxBytesPerRead) :
+    buffer_(init_size)
+  {}
 
-  virtual ~BufferReader() 
-  {
-    if (data_) delete[] data_;
-  }
+  virtual ~BufferReader() {}
 
-  char *peek() { return data_ + read_pos_; }
-  const char *peek() const { return data_ + read_pos_; }
+  char *peek() { return buffer_.peek(); }
+  const char *peek() const { return buffer_.peek(); }
 
-  int append(const std::string& data);
+  int append(const char *data, size_t len);
   int read(size_t n, std::string& data);
 
-  // int read(sockfd_t fd);
+  int read(sockfd_t fd);
   int readAll(std::string &data);
 
   void advance(size_t n);
   void advanceTo(const char *target);
   void reset();
 
-  size_t capacity() const { return capacity_; }
-  size_t readableBytes() const { return write_pos_ - read_pos_; }
-  size_t writableBytes() const { return capacity_ - write_pos_; }
+  size_t capacity() const { return buffer_.capacity(); }
+  size_t readableBytes() const { return buffer_.readableBytes(); }
+  size_t writableBytes() const { return buffer_.writableBytes(); }
 
 protected:
-  char *data_{nullptr};
-
-  size_t read_pos_{0};
-  size_t write_pos_{0};
-  size_t capacity_;
+  Buffer buffer_;
 };

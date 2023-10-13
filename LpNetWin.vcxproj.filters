@@ -151,6 +151,9 @@
     <ClInclude Include="src\mongoose\mongoose.h">
       <Filter>mongoose</Filter>
     </ClInclude>
+    <ClInclude Include="src\net\Connector.h">
+      <Filter>net</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\logger\Logger.cpp">
@@ -222,6 +225,9 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\mongoose\mongoose.c">
       <Filter>mongoose</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\Connector.cpp">
+      <Filter>net</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

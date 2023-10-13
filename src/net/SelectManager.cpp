@@ -58,7 +58,8 @@ void SelectManager::removeChannel(sockfd_t fd)
 
 bool SelectManager::handleEvent(int ms_timeout)
 {
-	LOG_DEBUG() << "handle events in SelectManager";
+	LOG_DEBUG() << "Handle events in SelectManager";
+	LOG_DEBUG() << "The count of event Channel is " << channels_.size();
 	if (channels_.empty()) {
 		if (ms_timeout <= 0) {
 			ms_timeout = 10;
@@ -121,7 +122,6 @@ bool SelectManager::handleEvent(int ms_timeout)
 		memcpy(&fd_read, &fd_read_backup_, sizeof(fd_set));
 	}
 
-
 	if (fd_write_reset) {
 		FD_ZERO(&fd_write_backup_);
 		memcpy(&fd_write_backup_, &fd_write, sizeof(fd_set));
@@ -129,7 +129,6 @@ bool SelectManager::handleEvent(int ms_timeout)
 	else {
 		memcpy(&fd_write, &fd_write_backup_, sizeof(fd_set));
 	}
-
 
 	if (fd_exp_reset) {
 		FD_ZERO(&fd_exp_backup_);
@@ -144,18 +143,22 @@ bool SelectManager::handleEvent(int ms_timeout)
 	}
 
 	struct timeval tv = { ms_timeout / 1000, ms_timeout % 1000 * 1000 };
-	int ret = select((int)max_fd_ + 1, &fd_read, &fd_write, &fd_exp, &tv);
+	int ret = ::select((int)max_fd_ + 1, &fd_read, &fd_write, &fd_exp, &tv);
 	if (ret < 0) {
 #if defined(__LINUX__)
 		if (errno == EINTR) {
 			return true;
 		}
-#endif 
+#endif
+		LOG_DEBUG() << "Fail!! select() return: " << ret;
 		return false;
 	}
 
+	LOG_DEBUG() << "Notify!! select() return: " << ret;
+
 	std::forward_list<std::pair<Channel::ptr, int>> event_list;
 	if (ret > 0) {
+		LOG_DEBUG() << "There is some events";
 		Mutex::lock locker(mutex_);
 		for (auto &[_, pChannel] : channels_) {
 			int events = 0;
