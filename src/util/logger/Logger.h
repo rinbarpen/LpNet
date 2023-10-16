@@ -199,10 +199,12 @@ public:
  * @param[in] line        文件行号
  * @param[in] ms_elapse   程序启动依赖的耗时(毫秒)
  * @param[in] timestamp   日志事件(秒)
+ * @param[in] config      日志颜色显示配置
  */
   LogEvent(LogLevel::Level level
            , std::string filename, int32_t line, std::string function_name
-           , uint32_t ms_elapse, uint64_t timestamp, LogColorConfig config = LogColorConfig());
+           , uint32_t ms_elapse, uint64_t timestamp
+           , LogColorConfig config = LogColorConfig());
 
   std::string getFilename() const { return filename_; }
   std::string getFunctionName() const { return function_name_; }

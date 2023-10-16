@@ -161,25 +161,23 @@ bool FileLogAppender::reopen()
 std::string FileLogAppender::getWholeFilename()
 {
   std::string wholeFilename;
-  time_t t = T_system_clock::to_time_t(T_system_clock::now());
-  int currDay = Clock::currentDay(t);
-  if (currDay != today_) {
-    today_ = currDay;
+  auto &&[today, todayStr] = Clock::currentDay("%Y-%m-%d");
+  if (today != today_) {
+    today_ = today;
     cnt_ = 0;
   }
   wholeFilename.append(filename_);
   wholeFilename.append("_");
-  wholeFilename.append(Clock::currentDayStr(t, "%Y-%m-%d"));
+  wholeFilename.append(todayStr);
   wholeFilename.append("_");
   if (cnt_ < 10)
     wholeFilename.append("0");
   wholeFilename.append(std::to_string(cnt_));
-  wholeFilename.append("_");
   wholeFilename.append(".log");
 
   // std::sprintf(wholeFilename.data(), 
-  //   "%s_%s_%02d_%s", 
-  //   filename_.c_str(), Clock::currentDayStr(t, "%Y-%m-%d").c_str(), cnt_, ".log");
+  //   "%s_%s_%02d.log", 
+  //   filename_.c_str(), Clock::currentDayStr(t, "%Y-%m-%d").c_str(), cnt_);
   return wholeFilename;
 }
 

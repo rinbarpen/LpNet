@@ -47,21 +47,13 @@ public:
     std::this_thread::sleep_for(TimeType(t));
   }
 
-  static int currentDay(time_t t)
+  static std::pair<int, std::string> currentDay(const char *fmt = "%Y-%m-%d %H:%M:%S")
   {
-    struct tm tm;
-    tm = *localtime(&t);
-
-    return tm.tm_yday;
-  }
-
-  static std::string currentDayStr(time_t t, const char *fmt = "%Y-%m-%d %H:%M:%S")
-  {
-    struct tm tm;
-    tm = *localtime(&t);
+    time_t t = T_system_clock::to_time_t(T_system_clock::now());
+    struct tm tm = *localtime(&t);
 
     std::string res;
     std::strftime(res.data(), 20, fmt, &tm);
-    return res;
+    return { tm.tm_yday, res };
   }
 };
