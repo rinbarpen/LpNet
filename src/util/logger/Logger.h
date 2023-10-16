@@ -152,6 +152,40 @@ struct LogLevel
 
 class Logger;
 
+struct LogColorConfig
+{
+  enum ColorType : int
+  {
+    END = 0,
+    RED,
+    GREEN,
+    YELLOW,
+    BLUE,
+    DEEP_RED,
+  };
+
+  const char *colors[6] = {
+    "\033[0m",
+    "\033[31m",
+    "\033[32m",
+    "\033[33m",
+    "\033[34m",
+    "\033[35m",
+  };
+
+  int LOG_END = END;
+  int LOG_LEVEL_DEBUG = BLUE;
+  int LOG_LEVEL_INFO = GREEN;
+  int LOG_LEVEL_WARN = YELLOW;
+  int LOG_LEVEL_ERROR = RED;
+  int LOG_LEVEL_FATAL = DEEP_RED;
+
+  const char *getColor(int type) const
+  {
+    return colors[type];
+  }
+};
+
 // 日志事件
 class LogEvent
 {
@@ -168,7 +202,7 @@ public:
  */
   LogEvent(LogLevel::Level level
            , std::string filename, int32_t line, std::string function_name
-           , uint32_t ms_elapse, uint64_t timestamp);
+           , uint32_t ms_elapse, uint64_t timestamp, LogColorConfig config = LogColorConfig());
 
   std::string getFilename() const { return filename_; }
   std::string getFunctionName() const { return function_name_; }
@@ -180,6 +214,9 @@ public:
   // 返回日志内容
   std::string getContent() const { return ss_.str(); }
   LogLevel::Level getLevel() const { return level_; }
+  void setLogColorOn(bool on) { color_on_ = on; }
+  bool isLogColorOn() const { return color_on_; }
+  LogColorConfig getColorConfig() const { return color_config_; }
   std::stringstream &getSS() { return ss_; }
 
   void format(const char *fmt, ...);
@@ -198,6 +235,9 @@ private:
   std::stringstream ss_;
   /// 日志等级
   LogLevel::Level level_;
+  /// 颜色配置
+  LogColorConfig color_config_;
+  bool color_on_{false};
 };
 
 class LogEventWrapper;
@@ -251,7 +291,8 @@ public:
 
   /**
    * @brief 返回格式化日志文本
-   * @param[in] pEventWrapper
+   * @param[in] pLogEvent
+   * @param[in] pLogger
    */
   std::string format(LogEvent::ptr pLogEvent, std::shared_ptr<Logger> pLogger);
   std::ostream &format(std::ostream &ofs, LogEvent::ptr pLogEvent, std::shared_ptr<Logger> pLogger);
@@ -273,7 +314,8 @@ public:
     /**
      * @brief 格式化日志到流
      * @param[in, out] os 日志输出流
-     * @param[in] pEventWrapper 日志事件包装器
+     * @param[in] pLogEvent 日志事件包装器
+     * @param[in] pLogger 日志器
      */
     virtual void format(std::ostream &os, LogEvent::ptr pLogEvent, std::shared_ptr<Logger> pLogger) = 0;
 	};
@@ -343,6 +385,7 @@ private:
   uint64_t lastAccessTime_{0};
   uint64_t lines_{0}; 
   uint8_t cnt_{0};  // cnt_ incr when lines_ encounters kMaxLines
+  int today_;
 };
 class StdoutLogAppender : public LogAppender
 {
@@ -355,7 +398,7 @@ public:
   virtual void log(LogEvent::ptr pLogEvent, std::shared_ptr<Logger> pLogger) override;
   virtual std::string toYamlString() override;
 private:
-  
+
 };
 
 class Logger : public std::enable_shared_from_this<Logger>

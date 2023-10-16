@@ -47,9 +47,16 @@ public:
     std::this_thread::sleep_for(TimeType(t));
   }
 
-  static std::string currentDayStr(const char *fmt = "%Y-%m-%d %H:%M:%S")
+  static int currentDay(time_t t)
   {
-    auto t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    struct tm tm;
+    tm = *localtime(&t);
+
+    return tm.tm_yday;
+  }
+
+  static std::string currentDayStr(time_t t, const char *fmt = "%Y-%m-%d %H:%M:%S")
+  {
     struct tm tm;
     tm = *localtime(&t);
 

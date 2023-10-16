@@ -1,6 +1,6 @@
 #pragma once
 #include "TcpConnection.h"
-#include "../../../Connector.h"
+#include "net/Connector.h"
 #include "net/EventLoop.h"
 
 class TcpClient

@@ -9,7 +9,6 @@
 #include <string_view>
 #include <type_traits>
 
-
 /// LogLevel
 std::string LogLevel::toString(LogLevel::Level level)
 {
@@ -66,7 +65,7 @@ LogLevel::Level LogLevel::fromString(const std::string &str)
 /// LogEvent
 LogEvent::LogEvent(LogLevel::Level level, 
   std::string filename, int32_t line, std::string function_name,
-  uint32_t ms_elapse, uint64_t timestamp) :
+  uint32_t ms_elapse, uint64_t timestamp, LogColorConfig config) :
   level_(level), 
   filename_(filename), line_(line), function_name_(function_name),
   ms_elapse_(ms_elapse), timestamp_(timestamp)
@@ -162,9 +161,25 @@ bool FileLogAppender::reopen()
 std::string FileLogAppender::getWholeFilename()
 {
   std::string wholeFilename;
-  std::sprintf(wholeFilename.data(), 
-    "%s_%s_%02d_%s", 
-    filename_.c_str(), Clock::currentDayStr("%Y-%m-%d").c_str(), cnt_, ".log");
+  time_t t = T_system_clock::to_time_t(T_system_clock::now());
+  int currDay = Clock::currentDay(t);
+  if (currDay != today_) {
+    today_ = currDay;
+    cnt_ = 0;
+  }
+  wholeFilename.append(filename_);
+  wholeFilename.append("_");
+  wholeFilename.append(Clock::currentDayStr(t, "%Y-%m-%d"));
+  wholeFilename.append("_");
+  if (cnt_ < 10)
+    wholeFilename.append("0");
+  wholeFilename.append(std::to_string(cnt_));
+  wholeFilename.append("_");
+  wholeFilename.append(".log");
+
+  // std::sprintf(wholeFilename.data(), 
+  //   "%s_%s_%02d_%s", 
+  //   filename_.c_str(), Clock::currentDayStr(t, "%Y-%m-%d").c_str(), cnt_, ".log");
   return wholeFilename;
 }
 
@@ -172,7 +187,9 @@ std::string FileLogAppender::getWholeFilename()
 void StdoutLogAppender::log(LogEvent::ptr pEvent, std::shared_ptr<Logger> pLogger) {
   if (pEvent->getLevel() >= level_) {
     Mutex::lock locker(mutex_);
+    pEvent->setLogColorOn(true);
     pFormatter_->format(std::cout, pEvent, pLogger);
+    pEvent->setLogColorOn(false);
   }
 }
 std::string StdoutLogAppender::toYamlString() {
@@ -202,7 +219,31 @@ class LogLevelFormatterItem final : public LogFormatter::LogFormatterItem {
 public:
   LogLevelFormatterItem(const std::string &str = "") {}
   void format(std::ostream &os, LogEvent::ptr pLogEvent, std::shared_ptr<Logger> pLogger) override {
-    os << LogLevel::toString(pLogEvent->getLevel());
+    if (pLogEvent->isLogColorOn()) {
+      LogColorConfig conf = pLogEvent->getColorConfig();
+      switch (pLogEvent->getLevel()) {
+      case LogLevel::LDEBUG:
+        os << conf.getColor(conf.LOG_LEVEL_DEBUG);
+        break;
+      case LogLevel::LINFO:
+        os << conf.getColor(conf.LOG_LEVEL_INFO);
+        break;
+      case LogLevel::LWARN:
+        os << conf.getColor(conf.LOG_LEVEL_WARN);
+        break;
+      case LogLevel::LERROR:
+        os << conf.getColor(conf.LOG_LEVEL_ERROR);
+        break;
+      case LogLevel::LFATAL:
+        os << conf.getColor(conf.LOG_LEVEL_FATAL);
+        break;
+      }
+      os << LogLevel::toString(pLogEvent->getLevel());
+      if (pLogEvent->getLevel() != LogLevel::LUNKNOWN)
+        os << conf.getColor(conf.LOG_END);
+    } else {
+      os << LogLevel::toString(pLogEvent->getLevel());
+    }
   }
 };
 class ElapseFormatterItem final : public LogFormatter::LogFormatterItem {
