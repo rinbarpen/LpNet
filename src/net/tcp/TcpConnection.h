@@ -2,6 +2,8 @@
 #include "net/Channel.h"
 #include "net/TaskScheduler.h"
 #include "util/buffer/Buffer.h"
+#include "util/buffer/BufferReader.h"
+#include "util/buffer/BufferWriter.h"
 
 class TcpConnection : public std::enable_shared_from_this<TcpConnection>
 {
@@ -10,7 +12,7 @@ protected:
 public:
   SHARED_REG(TcpConnection);
 
-  using ReadCallback = std::function<bool(TcpConnection::ptr, Buffer&)>;
+  using ReadCallback = std::function<bool(TcpConnection::ptr, BufferReader&)>;
   using DisconnectCallback = std::function<void(TcpConnection::ptr)>;
   using CloseCallback = std::function<void(TcpConnection::ptr)>;
   using ErrorCallback = std::function<void(TcpConnection::ptr)>;
@@ -39,8 +41,8 @@ protected:
   virtual void onDisconnect();
 
   std::atomic_bool running_{false};
-  std::unique_ptr<Buffer> read_buffer_;
-  std::unique_ptr<Buffer> write_buffer_;
+  std::unique_ptr<BufferReader> read_buffer_;
+  std::unique_ptr<BufferWriter> write_buffer_;
   TaskScheduler *task_scheduler_;
 private:
   void close();

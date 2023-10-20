@@ -16,14 +16,7 @@ void Acceptor::listen(const NetAddress& addr, int backlog)
   LOG_DEBUG() << "Acceptor is listening(" << backlog << ") "
               << "on " << "(" << addr.ip << ", " << addr.port << ")";
   Mutex::lock locker(mutex_);
-  if (nullptr == socket_)
-    socket_.reset(new TcpSocket());
-  else if (socket_->type() == "TcpSocket")
-    socket_.reset(new TcpSocket());
-  else if (socket_->type() == "UdpSocket")
-    socket_.reset(new UdpSocket());
-  else
-    socket_.reset(new TcpSocket());
+  socket_.reset(new TcpSocket());
 
   socket_api::setReuseAddr(socket_->getSockfd());
   socket_api::setReusePort(socket_->getSockfd());

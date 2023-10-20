@@ -179,7 +179,6 @@
     <ClInclude Include="src\util\mm\Arena.h" />
     <ClInclude Include="src\util\Record.h" />
     <ClInclude Include="src\util\SafeQueue.h" />
-    <ClInclude Include="src\util\SharedString.h" />
     <ClInclude Include="src\util\ThreadPool.h" />
     <ClInclude Include="src\util\Timer.h" />
     <ClInclude Include="src\util\Timestamp.h" />
@@ -208,8 +207,13 @@
     <ClCompile Include="src\util\Library.cpp" />
     <ClCompile Include="src\util\logger\Logger.cpp" />
     <ClCompile Include="src\util\mm\Arena.cpp" />
-    <ClCompile Include="src\util\SharedString.cpp" />
     <ClCompile Include="src\util\Timer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="TODO.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

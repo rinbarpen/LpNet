@@ -30,12 +30,19 @@ public:
   int append(const char *data, size_t len);
   int read(size_t n, std::string& data);
 
+  /**
+   * \brief 
+   * \param matchStr 
+   * \return the bytes we step by
+   */
+  int findFirst(const char *matchStr);
+
   int read(sockfd_t fd);
   int readAll(std::string &data);
 
   void advance(size_t n);
   void advanceTo(const char *target);
-  void reset();
+  void clear();
 
   size_t capacity() const { return buffer_.capacity(); }
   size_t readableBytes() const { return buffer_.readableBytes(); }

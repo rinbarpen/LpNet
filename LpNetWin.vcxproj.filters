@@ -72,9 +72,6 @@
     <ClInclude Include="src\util\SafeQueue.h">
       <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="src\util\SharedString.h">
-      <Filter>util</Filter>
-    </ClInclude>
     <ClInclude Include="src\util\ThreadPool.h">
       <Filter>util</Filter>
     </ClInclude>
@@ -177,9 +174,6 @@
     <ClCompile Include="src\util\Library.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="src\util\SharedString.cpp">
-      <Filter>util</Filter>
-    </ClCompile>
     <ClCompile Include="src\util\Timer.cpp">
       <Filter>util</Filter>
     </ClCompile>
@@ -229,5 +223,11 @@
     <ClCompile Include="src\net\Connector.cpp">
       <Filter>net</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="TODO.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

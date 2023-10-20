@@ -72,7 +72,6 @@ static sockfd_t socket(int domain, int type, int protocol)
 {
   return ::socket(domain, type, protocol);
 }
-
 static int bind(sockfd_t fd, const char *ip, uint16_t port)
 {
   int r;
@@ -111,7 +110,6 @@ static int listen(sockfd_t fd, int backlog)
   }
   return r;
 }
-
 static sockfd_t socket_bind_listen(int domain, int type, int protocol, 
                               const char *ip, uint16_t port, 
                               int backlog)
@@ -206,6 +204,19 @@ static int sendto(sockfd_t fd, const char *buf, uint32_t len, int flags, const c
   return r;
 }
 
+static NetAddress getSocketAddr(sockfd_t fd)
+{
+  struct sockaddr_in addr;
+  socklen_t len = sizeof(addr);
+  if (0 != getsockname(fd, (struct sockaddr *)&addr, &len)) {
+    return {};
+  }
+
+  char ip[INET_ADDRSTRLEN];
+  inet_ntop(AF_INET, &addr.sin_addr, ip, INET_ADDRSTRLEN);
+  return { ip, ::ntohs(addr.sin_port) };
+}
+
 static NetAddress getPeerAddr(sockfd_t fd)
 {
   struct sockaddr_in addr;
@@ -233,19 +244,29 @@ static void setReusePort(sockfd_t fd, int on = 1)
   setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, (const char *)&on, sizeof(on));
 #endif	
 }
-static void setNonBlocking(sockfd_t fd, int on = 1, int write_ms_timeout = 100)
+static void setNonBlocking(sockfd_t fd)
 {
 #if defined(__LINUX__)
   int flags = ::fcntl(fd, F_GETFL);
-  if (on)
-    flags |= O_NONBLOCK;
-  else
-    flags &= ~O_NONBLOCK;
+  flags |= O_NONBLOCK;
   ::fcntl(fd, F_SETFL, flags);
 #elif defined(__WIN__)
-  ::ioctlsocket(fd, FIONBIO, (u_long *)&on);
+  u_long on = 1;
+  ::ioctlsocket(fd, FIONBIO, &on);
 #endif
-  if (!on && write_ms_timeout > 0)
+}
+
+static void setBlocking(sockfd_t fd, int write_ms_timeout = 100)
+{
+#if defined(__LINUX__)
+  int flags = ::fcntl(fd, F_GETFL);
+  flags &= ~O_NONBLOCK;
+  ::fcntl(fd, F_SETFL, flags);
+#elif defined(__WIN__)
+  u_long on = 0;
+  ::ioctlsocket(fd, FIONBIO, &on);
+#endif
+  if (write_ms_timeout > 0)
   {
 #ifdef SO_SNDTIMEO
 #if defined(__LINUX__)

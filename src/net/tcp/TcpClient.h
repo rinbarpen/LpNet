@@ -15,6 +15,7 @@ public:
 
 protected:
 	virtual TcpConnection::ptr onConnect(sockfd_t fd);
+
 protected:
 	// TcpClientEnv &env_;
 	EventLoop *event_loop_;

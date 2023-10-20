@@ -7,7 +7,7 @@ class Buffer
 public:
 	static constexpr int kMaxBytesPerRead = 4096;
 public:
-	explicit Buffer(size_t capacity);
+	explicit Buffer(size_t capacity = kMaxBytesPerRead);
 	~Buffer();
 
   /**
@@ -39,7 +39,7 @@ public:
 
 	void reset(const size_t newCapacity);
 
-  int readTo(const char *target);
+  int find(const char *target);
 
   char *peek() { return data_ + get_pos_; }
   const char *peek() const { return data_ + get_pos_; }

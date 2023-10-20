@@ -19,14 +19,3 @@ public:
   using wlock = std::unique_lock<type>;
 
 };
-
-// TODO: Complete me!
-class Sem
-{
-public:
-
-private:
-  int cnt_{0};
-};
-
-using sem_t = Sem;

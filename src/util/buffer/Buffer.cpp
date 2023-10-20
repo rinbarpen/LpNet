@@ -65,7 +65,7 @@ int Buffer::read(sockfd_t fd)
 
 int Buffer::write(sockfd_t fd, size_t size, int ms_timeout)
 {
-  if (ms_timeout > 0) socket_api::setNonBlocking(fd, false, ms_timeout);
+  if (ms_timeout > 0) socket_api::setBlocking(fd, ms_timeout);
   size_t len = readableBytes();
   if (size < len) {
     len = size;
@@ -98,12 +98,12 @@ void Buffer::reset(const size_t newCapacity)
   capacity_ = newCapacity;
 }
 
-int Buffer::readTo(const char* target)
+int Buffer::find(const char* target)
 {
   int len = strlen(target);
 
-  for (size_t i = 0; i < len; ++i) {
-    for (size_t j = get_pos_; j != put_pos_; ++j) {
+  for (size_t j = get_pos_; j != put_pos_; ++j) {
+    for (size_t i = 0; i < len; ++i) {
       if (i + j == put_pos_) return -1;
 
       size_t idx = indexOf(j, i);
@@ -111,8 +111,10 @@ int Buffer::readTo(const char* target)
         break;
       }
     }
+    // get_pos_ = indexOf(get_pos_, j + len);
+    return j + len;
   }
 
-  return len;
+  return -1;
 }
 

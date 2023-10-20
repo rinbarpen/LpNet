@@ -23,6 +23,11 @@ int BufferReader::read(size_t n, std::string &data)
   return 0;
 }
 
+int BufferReader::findFirst(const char* matchStr)
+{
+  return buffer_.find(matchStr);
+}
+
 int BufferReader::read(sockfd_t fd)
 {
   int write_len = writableBytes();
@@ -50,9 +55,10 @@ void BufferReader::advance(size_t n)
 }
 void BufferReader::advanceTo(const char *target)
 {
-  buffer_.readTo(target);
+  int n = buffer_.find(target);
+  buffer_.read(nullptr, n);
 }
-void BufferReader::reset()
+void BufferReader::clear()
 {
   buffer_.clear();
 }

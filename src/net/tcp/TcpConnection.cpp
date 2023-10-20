@@ -1,8 +1,8 @@
 #include "TcpConnection.h"
 TcpConnection::TcpConnection(TaskScheduler* pTaskScheduler, sockfd_t fd) :
   task_scheduler_(pTaskScheduler),
-  read_buffer_(new Buffer(kMaxBufferSize)),
-  write_buffer_(new Buffer(kMaxBufferSize)),
+  read_buffer_(new BufferReader(kMaxBufferSize)),
+  write_buffer_(new BufferWriter(kMaxBufferSize)),
   channel_(new Channel(fd))
 {
   channel_->setReadCallback([this]() { this->onRead(); });
@@ -28,7 +28,7 @@ void TcpConnection::send(const char* data, size_t len)
   if (running_) {
     {
       Mutex::lock locker(mutex_);
-      write_buffer_->write(data, len);
+      write_buffer_->append(data, len);
     }
 
     this->onWrite();
@@ -71,7 +71,7 @@ void TcpConnection::onWrite()
 
   int ret = 0;
   // TODO:
-  ret = write_buffer_->write(channel_->getSockfd(), write_buffer_->size());
+  ret = write_buffer_->send(channel_->getSockfd(), 100);
   if (ret < 0) {
     this->close();
     return;

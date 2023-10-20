@@ -14,7 +14,7 @@ struct NetAddress
   uint16_t port;
 };
 
-class MulticastAddr
+class MulticastAddress
 {
 public:
 	std::string getAddr()
@@ -25,7 +25,7 @@ public:
 		struct sockaddr_in addr = { 0 };
 		std::random_device rd;
 
-		for (int n = 0; n <= 10; n++) {
+		for (int n = 0; n < 10; n++) {
 			uint32_t range = 0xE8FFFFFF - 0xE8000100;
 			addr.sin_addr.s_addr = htonl(0xE8000100 + (rd()) % range);
 			// Note:
@@ -54,4 +54,4 @@ private:
 	std::unordered_set<std::string> addrs_;
 };
 
-using SingleMulticastAddr = Singleton<MulticastAddr>;
+using SingleMulticastAddress = Singleton<MulticastAddress>;

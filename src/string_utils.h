@@ -159,4 +159,9 @@ parse_url_params(const std::string &url)
   return ret;
 }
 
+static void bzero(void *p, size_t n)
+{
+  memset(p, 0, n);
+}
+
 }  // namespace string_api
