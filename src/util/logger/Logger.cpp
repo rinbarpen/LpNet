@@ -65,7 +65,7 @@ LogLevel::Level LogLevel::fromString(const std::string &str)
 /// LogEvent
 LogEvent::LogEvent(LogLevel::Level level, 
   std::string filename, int32_t line, std::string function_name,
-  uint32_t ms_elapse, uint64_t timestamp, LogColorConfig config) :
+  int64_t ms_elapse, uint64_t timestamp, LogColorConfig config) :
   level_(level), 
   filename_(filename), line_(line), function_name_(function_name),
   ms_elapse_(ms_elapse), timestamp_(timestamp)

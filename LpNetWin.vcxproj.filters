@@ -25,8 +25,8 @@
     <Filter Include="util\mm">
       <UniqueIdentifier>{e6e8e3d0-9dfd-47f9-8b82-1d74e38468bb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="mongoose">
-      <UniqueIdentifier>{836a3b76-c641-43ce-b687-a2f4aafb3d22}</UniqueIdentifier>
+    <Filter Include="db">
+      <UniqueIdentifier>{9afc12be-fbb8-44d5-8255-1f92fa7cb0c1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -145,11 +145,11 @@
     <ClInclude Include="src\Singleton.h" />
     <ClInclude Include="src\string_utils.h" />
     <ClInclude Include="src\types.h" />
-    <ClInclude Include="src\mongoose\mongoose.h">
-      <Filter>mongoose</Filter>
-    </ClInclude>
     <ClInclude Include="src\net\Connector.h">
       <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\db\db.h">
+      <Filter>db</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -217,9 +217,6 @@
       <Filter>net</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\mongoose\mongoose.c">
-      <Filter>mongoose</Filter>
-    </ClCompile>
     <ClCompile Include="src\net\Connector.cpp">
       <Filter>net</Filter>
     </ClCompile>

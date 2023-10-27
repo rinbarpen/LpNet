@@ -31,8 +31,8 @@ struct TimerTask
     id = next_time_id();
   }
   TimerTask(TimerCallBackFn _callback, uint64_t _duration, bool _cycled = false) :
-    callback(_callback),
-    duration(_duration), cycled(_cycled)
+    duration(_duration),
+    cycled(_cycled), callback(_callback)
   {
     expired_time = Clock::now<T_high_resolution_clock>() + duration;
     id = next_time_id();
@@ -219,8 +219,18 @@ public:
    */
   uint64_t nextTimestamp();
 
+  static uint64_t now()
+  {
+    return Clock::now<T_high_resolution_clock>();
+  }
+
+  static void sleep(uint64_t ms_time)
+  {
+    Clock::sleep(ms_time);
+  }
+
   size_t size() const { return tasks_->size(); }
-  const size_t capacity() const { return tasks_->capacity(); }
+  size_t capacity() const { return tasks_->capacity(); }
 
 private:
   void run()
@@ -249,14 +259,14 @@ private:
           LOG_DEBUG() << "sleep " << timestamp << "(ms)";
           Clock::sleep(timestamp);
         }
+        tasks_->pop(task);
       }
 
-      task = this->getTimer();
       task();
     }
   }
+
 private:
-  // Con tasks_;
   TimerTaskBase* tasks_;
 
   std::atomic_bool running_{false};

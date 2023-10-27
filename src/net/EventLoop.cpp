@@ -4,7 +4,25 @@
 EventLoop::EventLoop(ThreadPool &threadPool) :
   thread_pool_(threadPool)
 {
+#if defined(__LINUX__)
+  signal(SIGPIPE, SIG_IGN);
+  signal(SIGQUIT, SIG_IGN);
+  signal(SIGUSR1, SIG_IGN);
+  signal(SIGTERM, SIG_IGN);
+  signal(SIGKILL, SIG_IGN);
+#elif defined(__WIN__)
+  WSADATA wsaData;
+  WSAStartup(MAKEWORD(2, 2), &wsaData);
+#endif
 }
+
+EventLoop::~EventLoop()
+{
+#if defined(__WIN__)
+  WSACleanup();
+#endif
+}
+
 bool EventLoop::addTriggerEvent(const TaskSchedulerId &id, TriggerEventCallback fn)
 {
   Mutex::lock locker(mutex_);
@@ -41,6 +59,11 @@ TaskScheduler::ptr EventLoop::getTaskScheduler(const TaskSchedulerId &id)
   auto it = task_schedulers_.find(id);
   if (it != task_schedulers_.end())
     return it->second;
+  else {
+    auto pTaskScheduler = TaskScheduler::make_shared(id);
+    task_schedulers_[id] = pTaskScheduler;
+    return pTaskScheduler;
+  }
 
   return nullptr;
 }
@@ -53,12 +76,13 @@ bool EventLoop::hasTaskScheduler(const TaskSchedulerId &id) const {
 void EventLoop::run()
 {
   LOG_DEBUG() << "EventLoop is running";
+
+  thread_pool_.start();
   for (auto &[id, pTaskScheduler] : task_schedulers_) {
     thread_pool_.submit([=]() {
       pTaskScheduler->start();
     });
   }
-  thread_pool_.start();
   thread_pool_.stop();
 
   while (true) {

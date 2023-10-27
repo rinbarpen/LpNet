@@ -137,11 +137,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\db\db.h" />
     <ClInclude Include="src\defs.h" />
     <ClInclude Include="src\env\Env.h" />
     <ClInclude Include="src\env\ServerEnv.h" />
     <ClInclude Include="src\marcos.h" />
-    <ClInclude Include="src\mongoose\mongoose.h" />
     <ClInclude Include="src\Mutex.h" />
     <ClInclude Include="src\net\Acceptor.h" />
     <ClInclude Include="src\net\Channel.h" />
@@ -185,7 +185,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\mongoose\mongoose.c" />
     <ClCompile Include="src\net\Acceptor.cpp" />
     <ClCompile Include="src\net\Connector.cpp" />
     <ClCompile Include="src\net\EpollManager.cpp" />

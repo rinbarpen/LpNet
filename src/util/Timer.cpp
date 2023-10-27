@@ -50,6 +50,8 @@ bool TimerTaskHeap::remove(TimerTaskId id)
       child++;
     }
     this->swap(child, pa);
+    pa = child;
+    child = pa * 2 + 1;
   }
 
   size_--;
@@ -286,10 +288,10 @@ void Timer::stop()
 uint64_t Timer::nextTimestamp()
 {
   auto task = tasks_->top();
-  uint64_t expired_time = task.getExpireTime();
-  if (expired_time == 0)
+  uint64_t expiredTime = task.getExpireTime();
+  if (expiredTime == 0)
     return Clock::infinity();
 
   auto now = Clock::now<T_high_resolution_clock>();
-  return expired_time >= now ? expired_time - now : 0;
+  return expiredTime >= now ? expiredTime - now : 0;
 }

@@ -27,8 +27,8 @@ void TaskScheduler::start()
   running_ = true;
 
 	while (running_) {
-		this->timers_.start();
-	  this->handleTriggerEvent();
+		this->handleTriggerEvent();
+	  this->timers_.start();
 		uint64_t timeout = timers_.nextTimestamp();
 		LOG_DEBUG() << "timeout(ms): " << timeout;
 	  this->handleEvent(static_cast<int>(timeout));

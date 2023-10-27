@@ -94,7 +94,8 @@ void Buffer::reset(const size_t newCapacity)
 
   delete[] data_;
   data_ = new_data;
-  get_pos_ = put_pos_ = 0;
+  get_pos_ = 0;
+  put_pos_ = n;
   capacity_ = newCapacity;
 }
 
@@ -102,17 +103,18 @@ int Buffer::find(const char* target)
 {
   int len = strlen(target);
 
-  for (size_t j = get_pos_; j != put_pos_; ++j) {
-    for (size_t i = 0; i < len; ++i) {
-      if (i + j == put_pos_) return -1;
+  for (size_t j = 0; j < size(); ++j) {
+    size_t i = 0;
+    for (; i < len; ++i) {
+      size_t idx = indexOf(j + get_pos_, i);
+      if (idx == put_pos_) return -1;
 
-      size_t idx = indexOf(j, i);
       if (data_[idx] != target[i]) {
         break;
       }
     }
-    // get_pos_ = indexOf(get_pos_, j + len);
-    return j + len;
+    if (i == len)
+      return j;
   }
 
   return -1;

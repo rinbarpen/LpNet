@@ -13,5 +13,7 @@
  - [ ] 完成env配置和ini配置（把yaml换成ini）
 
 ### FIXME(BUG):
- - [ ] 启动tcp服务器 bind失败
- - [ ] 创建tcp连接，socket不变
+ - [x] 启动tcp服务器 bind失败
+ - [x] 创建tcp连接，socket不变
+ ==(在win上未WSAStartup导致的)==
+ 

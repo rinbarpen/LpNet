@@ -30,7 +30,7 @@ public:
 			addr.sin_addr.s_addr = htonl(0xE8000100 + (rd()) % range);
 			// Note:
 		  addr_str.reserve(INET_ADDRSTRLEN);
-		  inet_ntop(AF_INET, (struct sockaddr*)&addr, addr_str.data(), INET_ADDRSTRLEN);
+		  inet_ntop(AF_INET, (struct sockaddr*)&addr, (char*)addr_str.data(), INET_ADDRSTRLEN);
 
 			if (addrs_.find(addr_str) != addrs_.end()) {
 				addr_str.clear();

@@ -8,7 +8,9 @@ public:
   static T* instance() 
   {
     if (!pValue_)
-      pValue_ = new T();
+      std::call_once(once_, [&]() {
+        pValue_ = new T();
+      });
     return pValue_;
   }
   
@@ -24,8 +26,9 @@ private:
   };
 
   Deletor deletor_;
-  static T *pValue_;
+  static inline std::once_flag once_ = {};
+  static inline T *pValue_ = nullptr;
 };
 
-template <class T>
-T *Singleton<T>::pValue_ = nullptr;
+// template <class T>
+// T *Singleton<T>::pValue_ = nullptr;

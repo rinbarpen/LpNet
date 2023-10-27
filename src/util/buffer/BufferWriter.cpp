@@ -41,9 +41,9 @@ bool BufferWriter::append(const char *data, uint32_t len)
 {
   if (full()) return false;
 
-  Buffer buffer(len);
-  buffer.write(data, len);
-  q_.push(buffer);
+  auto buffer = std::make_shared<Buffer>(len);
+  buffer->write(data, len);
+  q_.emplace(buffer);
   return true;
 }
 
@@ -51,8 +51,8 @@ int BufferWriter::send(sockfd_t fd, int ms_timeout)
 {
   if (empty()) return -1;
 
-  Buffer buffer = std::move(q_.front()); q_.pop();
-  size_t size = buffer.readableBytes();
-  buffer.write(fd, size, ms_timeout);
+  auto buffer = std::move(q_.front()); q_.pop();
+  size_t size = buffer->readableBytes();
+  buffer->write(fd, size, ms_timeout);
   return size;
 }

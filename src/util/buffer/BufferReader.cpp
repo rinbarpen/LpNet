@@ -15,9 +15,8 @@ int BufferReader::read(size_t n, std::string &data)
 {
   int bytesRead = buffer_.readableBytes();
   if (n > 0 && n <= bytesRead) {
-    buffer_.read(data.data(), n);
-
-    return n;
+    int len = buffer_.read(data.data(), n);
+    return len;
   }
 
   return 0;
@@ -26,6 +25,15 @@ int BufferReader::read(size_t n, std::string &data)
 int BufferReader::findFirst(const char* matchStr)
 {
   return buffer_.find(matchStr);
+}
+
+int BufferReader::findAndSkip(const char* matchStr)
+{
+  int len = buffer_.find(matchStr);
+  if (len < 0) return len;
+
+  buffer_.read(nullptr, len + strlen(matchStr));
+  return len + strlen(matchStr);
 }
 
 int BufferReader::read(sockfd_t fd)

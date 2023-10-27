@@ -10,16 +10,18 @@ template <typename T>
 class RingBuffer
 {
 public:
-  explicit RingBuffer(size_t capacity) :
-		capacity_(capacity + 1)
-	{}
+  explicit RingBuffer(size_t capacity = 4096) :
+		capacity_(capacity)
+  {
+		data_.resize(capacity);
+  }
 	~RingBuffer() = default;
 
 	bool push(const T &x)
 	{
 		Mutex::lock locker(mutex_);
 
-		if (capacity_ <= size())
+		if (capacity_ <= sizeInternal())
 			return false;
 
 		data_[put_pos_] = x;
@@ -49,7 +51,7 @@ public:
 	
 	bool full() const { Mutex::lock locker(mutex_); return fullInternal(); }
 	bool empty() const { Mutex::lock locker(mutex_); return emptyInternal(); }
-	size_t capacity() const { return capacity_ - 1; }
+	size_t capacity() const { return capacity_; }
 	size_t size() const { Mutex::lock locker(mutex_); return sizeInternal(); }
 private:
 	bool fullInternal() const { return sizeInternal() == capacity_; }

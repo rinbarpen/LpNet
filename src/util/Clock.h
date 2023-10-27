@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstdint>
 #include <chrono>
+#include <cstdint>
 #include <cstring>
 #include <thread>
 
@@ -52,8 +52,8 @@ public:
     time_t t = T_system_clock::to_time_t(T_system_clock::now());
     struct tm tm = *localtime(&t);
 
-    std::string res;
-    std::strftime(res.data(), 20, fmt, &tm);
+    char res[30];
+    std::strftime(res, 20, fmt, &tm);
     return { tm.tm_yday, res };
   }
 };

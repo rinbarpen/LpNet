@@ -36,6 +36,7 @@ public:
    * \return the bytes we step by
    */
   int findFirst(const char *matchStr);
+  int findAndSkip(const char *matchStr);
 
   int read(sockfd_t fd);
   int readAll(std::string &data);

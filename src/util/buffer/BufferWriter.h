@@ -18,6 +18,7 @@ public:
   explicit BufferWriter(size_t qcap) :
     capacity_(qcap)
   {}
+  ~BufferWriter() = default;
 
   bool append(const char* data, uint32_t len);
   int  send(sockfd_t fd, int ms_timeout = 0);
@@ -26,7 +27,9 @@ public:
   bool full()  const { return capacity_ == q_.size(); }
   size_t capacity() const { return capacity_; }
 
+  size_t size() const { return q_.size(); }
+
 private:
-  std::queue<Buffer> q_;
+  std::queue<std::shared_ptr<Buffer>> q_;
   size_t capacity_;
 };

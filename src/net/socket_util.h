@@ -88,7 +88,7 @@ static int bind(sockfd_t fd, const char *ip, uint16_t port)
     return r;
   }
 
-  r = ::bind(fd, (struct sockaddr*)&addr, sizeof(addr));
+  r = ::bind(fd, reinterpret_cast<const struct sockaddr*>(&addr), INET_ADDRSTRLEN);
   if (r == SOCKET_ERROR) {
     LOG_ERROR() << "error bind: (" << inet_ntoa(addr.sin_addr) << " " << ntohs(addr.sin_port) << ")";
     return r;

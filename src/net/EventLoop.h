@@ -16,6 +16,7 @@ public:
   using TaskSchedulerMap = std::unordered_map<TaskSchedulerId, TaskScheduler::ptr>;
 
   EventLoop(ThreadPool &threadPool);
+  ~EventLoop();
 
   // 都不会检查目标TaskScheduler是否存在
   bool addTriggerEvent(const TaskSchedulerId &id, TriggerEventCallback fn);

@@ -15,9 +15,13 @@
 #include "Mutex.h"
 #include "Singleton.h"
 #include "util/Clock.h"
+#include "util/Record.h"
 
 #define LogEventGen(level, timestamp) \
   std::make_shared<LogEvent>(level, __FILE__, __LINE__, __FUNCTION__, 0, timestamp)
+
+#define LogEventGen2(level) \
+  std::make_shared<LogEvent>(level, __FILE__, __LINE__, __FUNCTION__, 0, Clock::now<T_system_clock>())
 
 #define LogEventWrapperGen(pLogger, level, timestamp) \
   std::make_shared<LogEventWrapper>(LogEventGen(level, timestamp), pLogger)
@@ -197,13 +201,13 @@ public:
  * @param[in] level       日志级别
  * @param[in] filename    文件名
  * @param[in] line        文件行号
- * @param[in] ms_elapse   程序启动依赖的耗时(毫秒)
- * @param[in] timestamp   日志事件(秒)
+ * @param[in] ms_elapse   日志程序距离上次打印的耗时(毫秒)
+ * @param[in] timestamp   日志事件发生的时间
  * @param[in] config      日志颜色显示配置
  */
   LogEvent(LogLevel::Level level
            , std::string filename, int32_t line, std::string function_name
-           , uint32_t ms_elapse, uint64_t timestamp
+           , int64_t ms_elapse, uint64_t timestamp
            , LogColorConfig config = LogColorConfig());
 
   std::string getFilename() const { return filename_; }
@@ -230,7 +234,7 @@ private:
   /// 行号
   int32_t line_ = 0;
   /// 程序启动开始到现在的毫秒数
-  uint32_t ms_elapse_ = 0;
+  int64_t ms_elapse_ = 0;
   /// 时间戳
   uint64_t timestamp_ = 0;
   /// 日志内容流
